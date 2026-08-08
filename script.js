@@ -1,5 +1,10 @@
 const menuButton = document.querySelector('.menu-button');
 const mobileNav = document.querySelector('.mobile-nav');
+const siteHeader = document.querySelector('.site-header');
+
+const updateHeader = () => siteHeader.classList.toggle('scrolled', window.scrollY > 70);
+updateHeader();
+window.addEventListener('scroll', updateHeader, { passive: true });
 
 menuButton.addEventListener('click', () => {
   const isOpen = mobileNav.classList.toggle('open');
@@ -28,8 +33,30 @@ document.querySelectorAll('.faq-item button').forEach(button => {
 });
 
 const modal = document.querySelector('.modal');
+const entryForm = document.querySelector('.entry-form');
+const entryFormWrap = document.querySelector('.entry-form-wrap');
+const formSuccess = document.querySelector('.form-success');
 document.querySelector('.entry-button').addEventListener('click', () => modal.showModal());
-document.querySelectorAll('.modal-close, .modal-close-secondary').forEach(button => button.addEventListener('click', () => modal.close()));
+document.querySelectorAll('.modal-close, .modal-close-secondary').forEach(button => button.addEventListener('click', () => {
+  modal.close();
+  window.setTimeout(() => {
+    entryFormWrap.hidden = false;
+    formSuccess.hidden = true;
+    entryForm.reset();
+  }, 200);
+}));
+entryForm.addEventListener('submit', event => {
+  event.preventDefault();
+  if (!entryForm.reportValidity()) return;
+  entryFormWrap.hidden = true;
+  formSuccess.hidden = false;
+});
+document.querySelectorAll('.policy-jump').forEach(link => link.addEventListener('click', event => {
+  event.preventDefault();
+  const target = document.querySelector(link.getAttribute('href'));
+  target.open = true;
+  target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}));
 modal.addEventListener('click', event => {
   const box = modal.getBoundingClientRect();
   if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) modal.close();
